@@ -1,20 +1,16 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.14.4'
-        }
-    }
+    agent any
 
     stages {
 
-        stage('Install Dependencies') {
+        stage('Test (Python container)') {
+            agent {
+                docker {
+                    image 'python:3.14.4'
+                }
+            }
             steps {
                 sh 'pip install -r requirements.txt'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
                 sh 'python manage.py test'
             }
         }
