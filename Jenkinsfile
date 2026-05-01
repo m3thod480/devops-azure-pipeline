@@ -45,11 +45,11 @@ pipeline {
                 sh 'docker run -d --name django-api -p 8000:8000 $DOCKER_IMAGE:latest'
             }
         }
-        
+
         stage('Health Check') {
             steps {
                 sh 'sleep 5'
-                sh 'curl -f http://localhost:8000/api/health/'
+                sh 'curl -f http://host.docker.internal:8000/api/health/'
             }
         }
     }
