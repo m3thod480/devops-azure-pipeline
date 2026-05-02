@@ -66,8 +66,15 @@ pipeline {
                     sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID'
                     sh 'az account set --subscription $AZURE_SUBSCRIPTION_ID'
                     sh 'az containerapp update --name django-api --resource-group rg-devops-django --image $DOCKER_IMAGE:$IMAGE_TAG'
-                    sh 'az containerapp start --name django-api --resource-group rg-devops-django'
+                    sh 'az containerapp update --name django-api --resource-group rg-devops-django --min-replicas 1'
                 }
+            }
+        }
+        
+        stage('Azure Health Check') {
+            steps {
+                sh 'sleep 20'
+                sh 'curl -f https://django-api.nicedesert-931be2f6.westeurope.azurecontainerapps.io/api/health/'
             }
         }
     }
