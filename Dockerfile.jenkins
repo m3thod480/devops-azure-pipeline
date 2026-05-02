@@ -3,6 +3,5 @@ FROM jenkins/jenkins:lts
 USER root
 
 RUN apt-get update && \
-    apt-get install -y docker.io
-
-USER jenkins
+    apt-get install -y docker.io curl && \
+    curl -sL https://aka.ms/InstallAzureCLIDeb | bash
