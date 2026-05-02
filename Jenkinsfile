@@ -66,11 +66,15 @@ pipeline {
                     sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID'
                     sh 'az account set --subscription $AZURE_SUBSCRIPTION_ID'
                     sh 'az containerapp update --name django-api --resource-group rg-devops-django --image $DOCKER_IMAGE:$IMAGE_TAG'
-                    sh 'az containerapp update --name django-api --resource-group rg-devops-django --min-replicas 1'
+                    sh '''
+            az rest \
+              --method post \
+              --url "https://management.azure.com/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/rg-devops-django/providers/Microsoft.App/containerApps/django-api/start?api-version=2024-03-01"
+            '''
                 }
             }
         }
-        
+
         stage('Azure Health Check') {
             steps {
                 sh 'sleep 20'
