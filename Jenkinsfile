@@ -66,6 +66,7 @@ pipeline {
                     sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID'
                     sh 'az account set --subscription $AZURE_SUBSCRIPTION_ID'
                     sh 'az containerapp update --name django-api --resource-group rg-devops-django --image $DOCKER_IMAGE:$IMAGE_TAG'
+                    sh 'az containerapp start --name django-api --resource-group rg-devops-django'
                 }
             }
         }
