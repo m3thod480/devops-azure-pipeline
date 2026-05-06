@@ -55,30 +55,19 @@ pipeline {
             }
         }
 
-        stage('Deploy to Azure Container Apps') {
+        stage('Deploy with Terraform') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'azure-client-id', variable: 'AZURE_CLIENT_ID'),
-                    string(credentialsId: 'azure-client-secret', variable: 'AZURE_CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'AZURE_TENANT_ID'),
-                    string(credentialsId: 'azure-subscription-id', variable: 'AZURE_SUBSCRIPTION_ID')
+                    string(credentialsId: 'azure-client-id', variable: 'ARM_CLIENT_ID'),
+                    string(credentialsId: 'azure-client-secret', variable: 'ARM_CLIENT_SECRET'),
+                    string(credentialsId: 'azure-tenant-id', variable: 'ARM_TENANT_ID'),
+                    string(credentialsId: 'azure-subscription-id', variable: 'ARM_SUBSCRIPTION_ID')
                 ]) {
-                    sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID'
-                    sh 'az account set --subscription $AZURE_SUBSCRIPTION_ID'
-                    sh 'az containerapp update --name django-api --resource-group rg-devops-django --image $DOCKER_IMAGE:$IMAGE_TAG'
-                    sh '''
-            az rest \
-              --method post \
-              --url "https://management.azure.com/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/rg-devops-django/providers/Microsoft.App/containerApps/django-api/start?api-version=2024-03-01"
-            '''
+                    dir('infra') {
+                        sh 'terraform init'
+                        sh 'terraform apply -auto-approve -var="container_image=$DOCKER_IMAGE:$IMAGE_TAG"'
+                    }
                 }
-            }
-        }
-
-        stage('Azure Health Check') {
-            steps {
-                sh 'sleep 20'
-                sh 'curl -f https://django-api.nicedesert-931be2f6.westeurope.azurecontainerapps.io/api/health/'
             }
         }
     }
