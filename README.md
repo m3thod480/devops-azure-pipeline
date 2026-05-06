@@ -83,18 +83,6 @@ Esto permite ejecutar Terraform desde Jenkins sin intervención manual.
 
 ---
 
-## 🌐 Demo
-
-👉 API disponible en:
-
-```
-https://TU-URL/api/health/
-```
-
-*(Puede no estar activa continuamente para optimizar costes)*
-
----
-
 ## 📂 Estructura del proyecto
 
 ```text
