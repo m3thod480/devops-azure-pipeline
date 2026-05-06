@@ -7,6 +7,13 @@ terraform {
       version = "~> 4.70"
     }
   }
+
+  backend "azurerm" {
+    resource_group_name  = "rg-tfstate-devops"
+    storage_account_name = "sttfstatedevops34021"
+    container_name       = "tfstate"
+    key                  = "devops-django.terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
